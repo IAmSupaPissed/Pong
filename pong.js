@@ -96,7 +96,7 @@ function startSocketServer() {
 
 		socket.on('rightPaddleDown', function() {
 				rightSpeed = speed;
-				io.emit('rightPaddleUp', { rightSpeed });
+				io.emit('rightPaddleDown', { rightSpeed });
 		});
 
 	});
