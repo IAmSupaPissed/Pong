@@ -20,7 +20,9 @@ let rightPosition = 44;
 let paddleHeight = 12;
 let leftSpeed = 0;
 let rightSpeed = 0;
-
+let ballSpeed = 1;
+let angle;
+let direction;
 let players = [];
 
 /* MIDDLEWARE TO LOOK AT THE REQUEST BEFORE HANDLING IT */
@@ -47,13 +49,19 @@ function startSocketServer() {
         }
 
         if (players.length === 2) {
+			const pi = Math.PI;
+			direction = Math.random() <= .5 ? 1 : 1;
+			angle = (Math.random() - 0.5) * 2*pi/3;
 			io.emit('start', {
 				speed,
 				leftPosition,
 				rightPosition,
 				paddleHeight,
 				leftSpeed,
-				rightSpeed
+				rightSpeed,
+				angle,
+				direction,
+				ballSpeed
 			});
 			
         }
