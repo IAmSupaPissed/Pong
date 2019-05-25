@@ -26,6 +26,7 @@ let ballPosition = {x: 50, y: 50};
 let angle;
 let direction;
 let players = [];
+let score = {left: 0, right: 0};
 
 /* MIDDLEWARE TO LOOK AT THE REQUEST BEFORE HANDLING IT */
 app.use(bodyParser.json({					// Limiting the amount of data the client can send to 50mb
@@ -45,17 +46,16 @@ app.get('/', (req, res, next) => {			// Recieving a request from the client when
 
 function startSocketServer() {
 	io.on('connection', function(socket) {
-        players.push(socket); 
-        if (players.length > 2) {
-            socket.emit('goaway', 'go away');
-        }
+		players.push(socket); 
 
-        if (players.length === 2) {
+
+		function initialize() {
 			const pi = Math.PI;
 			direction = Math.random() <= .5 ? -1 : 1;
 			angle = (Math.random() - 0.5) * 2*pi/3;
 			io.emit('start', {
 				speed,
+				score,
 				leftPosition,
 				rightPosition,
 				paddleHeight,
@@ -65,9 +65,17 @@ function startSocketServer() {
 				direction,
 				ballSpeed,
 				ballSize,
-				ballPosition
+				ballPosition,
+				
 			});
 			
+		}
+        if (players.length > 2) {
+            socket.emit('goaway', 'go away');
+        }
+
+        if (players.length === 2) {
+			initialize()
         }
         
         
@@ -75,42 +83,53 @@ function startSocketServer() {
             socket.emit('waiting', 'bring your friends');
         }
 		// LETS DETERMINE WHEN THE USER DISCONNECTS
-		socket.on('disconnect', function() {
+		socket.on('disconnect', function () {
+			score = {left: 0, right: 0};
             players = players.filter(player => player.id !== socket.id);
             
            
 		});
 
-		socket.on('leftPaddleUp', function() {
+		socket.on('leftPaddleUp', function () {
 				leftSpeed = -1*speed;
 				io.emit('leftPaddleUp', { leftSpeed });
 		});
 
-		socket.on('leftPaddleStop', function() {
+		socket.on('leftPaddleStop', function () {
 				leftSpeed = 0;
 				io.emit('leftPaddleStop', { leftSpeed });
 		});
 
-		socket.on('leftPaddleDown', function() {
+		socket.on('leftPaddleDown', function () {
 				leftSpeed = speed;
 				io.emit('leftPaddleUp', { leftSpeed})
 		});
 
-		socket.on('rightPaddleUp', function() {
+		socket.on('rightPaddleUp', function () {
 				rightSpeed = -1*speed;
 				io.emit('rightPaddleUp', { rightSpeed });
 		});
 
-		socket.on('rightPaddleStop', function() {
+		socket.on('rightPaddleStop', function () {
 				rightSpeed = 0;
 				io.emit('rightPaddleStop', { rightSpeed });
 		});
 
-		socket.on('rightPaddleDown', function() {
+		socket.on('rightPaddleDown', function () {
 				rightSpeed = speed;
 				io.emit('rightPaddleDown', { rightSpeed });
 		});
 
+		socket.on('rightBallPass', function () {
+			score.left++;
+			initialize()
+
+		});
+
+		socket.on('leftBallPass', function () {
+			score.right++;
+			initialize()
+		});
 	});
 }
 
