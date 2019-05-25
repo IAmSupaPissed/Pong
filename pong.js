@@ -50,7 +50,7 @@ function startSocketServer() {
 
         if (players.length === 2) {
 			const pi = Math.PI;
-			direction = Math.random() <= .5 ? 1 : 1;
+			direction = Math.random() <= .5 ? -1 : 1;
 			angle = (Math.random() - 0.5) * 2*pi/3;
 			io.emit('start', {
 				speed,
