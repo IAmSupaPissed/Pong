@@ -74,7 +74,7 @@ function startSocketServer() {
             angle;
             direction;
             speedOfBall = 1;
-            ballSize = 3;
+            ballSize = 10;
             ballSpeed = { x: 0, y: 0 }
             ballPosition = { x: 50, y: 50 };
         }
