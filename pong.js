@@ -30,7 +30,7 @@ let score = { left: 0, right: 0 };
 let angle;
 let direction;
 let speedOfBall = 1;
-let ballSize = 3;
+let ballSize = 5;
 let ballSpeed = { x: 0, y: 0 }
 let ballPosition = { x: 50, y: 50 };
 
